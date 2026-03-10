@@ -183,10 +183,20 @@ if __name__ == "__main__":
     if not WEBHOOK_URL:
         print("[monitor] WARNING: DISCORD_WEBHOOK_URL not set. Notifications disabled.")
 
+    post_to_discord({"content": f"{mention()} ✅ Regime bot is live and connected!"})
+    print("[monitor] Startup ping sent to Discord.")
+
     # Run once immediately on startup
     run_check()
 
-    # Then loop every hour
+    # Then loop — wakes up at HH:01 every hour
     while True:
-        time.sleep(CHECK_INTERVAL)
+        now = datetime.now(timezone.utc)
+        minutes_past = now.minute * 60 + now.second
+        if now.minute < 1:
+            wait = 60 - minutes_past
+        else:
+            wait = 3600 - minutes_past + 60
+        print(f"[monitor] Next check in {wait//60}m {wait%60}s (at next HH:01)")
+        time.sleep(wait)
         run_check()

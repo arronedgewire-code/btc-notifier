@@ -40,7 +40,9 @@ def fetch_btc_data(retries=3, pause=5):
                 if data.get("error"):
                     raise ValueError(f"Kraken API error: {data['error']}")
 
-                candles = data["result"][PAIR]
+                # Kraken returns pair under internal name e.g. "XXBTZUSD" not "XBTUSD"
+                result_key = [k for k in data["result"].keys() if k != "last"][0]
+                candles = data["result"][result_key]
                 last = int(data["result"]["last"])
                 break  # success
 

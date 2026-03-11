@@ -177,6 +177,7 @@ def run_check():
         save_last_trade(latest_trade)
     else:
         print(f"[monitor] No new trades since last check.")
+        post_to_discord({"content": f"{mention()} ✅ Regime unchanged!, try print regime data points update here."})
 
 if __name__ == "__main__":
     print("[monitor] Starting BTC regime monitor...")
@@ -196,7 +197,7 @@ if __name__ == "__main__":
         if now.minute < 1:
             wait = 60 - minutes_past
         else:
-            wait = 3600 - minutes_past + 60
-        print(f"[monitor] Next check in {wait//60}m {wait%60}s (at next HH:01)")
+            wait = 3600 - minutes_past + 180 #+3mins to allow main model to propegate first.
+        print(f"[monitor] Next check in {wait//60}m {wait%180}s (at next HH:03)")
         time.sleep(wait)
         run_check()

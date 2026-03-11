@@ -177,7 +177,18 @@ def run_check():
         save_last_trade(latest_trade)
     else:
         print(f"[monitor] No new trades since last check.")
-        post_to_discord({"content": f"{mention()} ✅ Regime unchanged!, f"[detect_regimes]" Regime distribution:\n f"['regime']".value_counts())"})
+        # Build a readable distribution of regimes if available
+        try:
+            counts_str = df['regime'].value_counts().to_string()
+        except Exception:
+            counts_str = "N/A"
+        message = (
+            f"{mention()} ✅ Regime unchanged! [detect_regimes]\n"
+            "Regime distribution:\n"
+            f"```text\n{counts_str}\n```"
+        )
+        post_to_discord({"content": message})
+
 
 if __name__ == "__main__":
     print("[monitor] Starting BTC regime monitor...")

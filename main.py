@@ -177,17 +177,20 @@ def run_check():
         save_last_trade(latest_trade)
     else:
         print(f"[monitor] No new trades since last check.")
-        # Build a readable distribution of regimes if available
+
+    # Post regime distribution once daily at 1am UTC
+    now = datetime.now(timezone.utc)
+    if now.hour == 0 and 15 <= now.minute < 19:  # within the 00:15 UTC check window
         try:
             counts_str = df['regime'].value_counts().to_string()
         except Exception:
             counts_str = "N/A"
         message = (
-            f"{mention()} ✅ Regime unchanged! [detect_regimes]\n"
-            "Regime distribution:\n"
+            f"{mention()} 📊 Daily Regime Distribution Update\n"
             f"```text\n{counts_str}\n```"
         )
         post_to_discord({"content": message})
+        print("[monitor] Daily regime distribution posted.")
 
 
 if __name__ == "__main__":
